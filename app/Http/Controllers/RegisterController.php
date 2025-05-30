@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Register;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -16,8 +17,8 @@ class RegisterController extends Controller
         'owner_name'     => 'required|string|max:255',
         'business_type'  => 'required|string|max:255',
         'address'        => 'required|string|max:500',
-        'phone_no'       => 'required|numeric|digits_between:7,15|unique:register,phone_no',
-        'email'       => 'required|email|unique:register,email',
+        'phone_no'       => 'required|numeric|digits_between:7,15|unique:registers,phone_no',
+        'email'       => 'required|email|unique:registers,email',
         'password'       => 'required|string|min:6',
         ]);
 
@@ -53,37 +54,4 @@ class RegisterController extends Controller
             ],500);
         }
     }
-    public function user(Request $request)
-    {
-        $validator = Validator::make($request->all(),[
-        'name'     => 'required|string|max:255',
-        'email'    => 'required|email|unique:users,email',
-        'password' => 'required|string|min:6|confirmed', // optional: use password_confirmation
-        'role'     => 'nullable|in:staff',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()->first()], 422);
-        }
-        try{
-            $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-            'role' => 'staff'
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'user add successfully'
-            ],201);
-
-        }catch (\Exception $e){
-            return response()->json([
-                'success' => false,
-                'message' => 'Somthing want wrong',
-                'error' => $e->getmessage()
-            ],500);
-        }
-    }
-    
 }
