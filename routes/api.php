@@ -6,6 +6,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\ReminderController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -23,6 +24,8 @@ Route::post('/user',[UserController::class,'user']);
 Route::put('/update-user/{id}', [UserController::class, 'updateuser']);
 Route::get('/user/{id}',[UserController::class, 'getUserById']);
 Route::resource('/staff',StaffController::class);
+Route::resource('/reminder',ReminderController::class);
+Route::get('/reminder/fillter/date',[ReminderController::class, 'filterByDate']);
 
 
 

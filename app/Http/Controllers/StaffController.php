@@ -137,6 +137,8 @@ class StaffController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()->first()], 422);
         }
+        // dd($request->resignation_date);
+
 
         try {
             $adminUser = User::where('role', 'admin')->first();
@@ -150,6 +152,8 @@ class StaffController extends Controller
 
             $staff = Staff::findOrFail($id);
 
+           $resignationDate = $request->has('resigned') && $request->resigned ? now() : null;
+
             $staff->update([
                 'staff_name'        => $request->staff_name,
                 'father_name'       => $request->father_name,
@@ -160,10 +164,11 @@ class StaffController extends Controller
                 'address'           => $request->address,
                 'sales_man'         => $request->sales_man,
                 'sales_executive'   => $request->sales_executive,
-                'password'          => $request->password, // still plain in staff table
+                'password'          => $request->password,
                 'joining_date'      => $request->joining_date,
-                'resignation_date'  => $request->resignation_date,
+                'resignation_date'  => $resignationDate,
             ]);
+
 
             // Assuming staff table has user_id linking to users table
             $user = User::findOrFail($staff->user_id);
