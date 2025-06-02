@@ -21,4 +21,14 @@ class Notice extends Model
     protected $casts = [
         'staff_id' => 'array',
     ];
+
+    public function register()
+    {
+        return $this->belongsTo(Register::class, 'location_id', 'id');
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class);
+    }
 }

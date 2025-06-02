@@ -55,12 +55,3 @@ class RegisterController extends Controller
         }
     }
 }
-/*
-location_id
-staff_id
-title
-reminder_date
-reminder_time
-
-
-*/

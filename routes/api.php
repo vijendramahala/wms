@@ -7,6 +7,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ReminderController;
+use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\NotesController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -27,6 +29,17 @@ Route::resource('/staff',StaffController::class);
 Route::resource('/reminder',ReminderController::class);
 Route::get('/reminder/fillter/date',[ReminderController::class, 'filterByDate']);
 
+//notice
+Route::post('/notice/create',[NoticeController::class, 'store']);
+Route::put('/notice/update/{id}',[NoticeController::class, 'update']);
+Route::delete('/notice/delete/{id}',[NoticeController::class, 'destroy']);
+Route::get('/notice/show/{id}',[NoticeController::class, 'show']);
+
+//note 
+Route::post('/notes/create',[NotesController::class,'store']);
+Route::PUT('/notes/update/{id}',[NotesController::class,'update']);
+Route::delete('/notes/delete/{id}',[NotesController::class,'destroy']);
+Route::get('/notes',[NotesController::class,'getByLocationAndStaff']);
 
 
 Route::post('/change-password',[AuthController::class,'changePassword']);
