@@ -9,6 +9,8 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\NotesController;
+use App\Http\Controllers\TargetController;
+use App\Http\Controllers\LeaveController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -41,6 +43,17 @@ Route::PUT('/notes/update/{id}',[NotesController::class,'update']);
 Route::delete('/notes/delete/{id}',[NotesController::class,'destroy']);
 Route::get('/notes',[NotesController::class,'getByLocationAndStaff']);
 
+//target
+Route::post('/target/create',[TargetController::class,'store']);
+Route::put('/target/update/{id}',[TargetController::class,'update']);
+Route::delete('/target/delete/{id}',[TargetController::class,'destroy']);
+Route::get('/target',[TargetController::class,'index']);
+
+//leave
+Route::post('/leave/create',[LeaveController::class, 'store']);
+Route::put('/leave/update/{id}',[LeaveController::class, 'update']);
+Route::get('/leave',[LeaveController::class, 'index']);
+Route::get('/leave/staff',[LeaveController::class, 'staffLeaves']);
 
 Route::post('/change-password',[AuthController::class,'changePassword']);
 Route::post('/logout', [AuthController::class, 'logout']);
