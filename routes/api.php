@@ -11,6 +11,8 @@ use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\TargetController;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\MiscController;
+use App\Http\Controllers\ProspectController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -54,6 +56,18 @@ Route::post('/leave/create',[LeaveController::class, 'store']);
 Route::put('/leave/update/{id}',[LeaveController::class, 'update']);
 Route::get('/leave',[LeaveController::class, 'index']);
 Route::get('/leave/staff',[LeaveController::class, 'staffLeaves']);
+
+//misc 
+Route::post('/misc/create',[MiscController::class, 'store']);
+Route::put('/misc/update/{id}', [MiscController::class, 'update']);
+Route::delete('/misc/delete/{id}',[MiscController::class, 'destroy']);
+Route::get('/misc',[MiscController::class, 'index']);
+
+//prospact
+Route::post('/prospect/create',[ProspectController::class, 'store']);
+Route::put('/prospect/update/{id}', [ProspectController::class, 'update']);
+Route::delete('/prospect/delete/{id}', [ProspectController::class, 'destroy']);
+Route::get('/prospect', [ProspectController::class, 'index']);
 
 Route::post('/change-password',[AuthController::class,'changePassword']);
 Route::post('/logout', [AuthController::class, 'logout']);
