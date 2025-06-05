@@ -65,8 +65,10 @@ class ProspectController extends Controller
         'district'         => 'nullable|string|max:100',
         'state'            => 'nullable|string|max:100',
         'address'          => 'required|string|max:255',
+        'action_taken'     => 'required|string|max:255',
         'product'          => 'required|string|max:100',
         'variant'          => 'required|string|max:100',
+        'status_type'      => 'required|string|max:100',
         'software_price'   => 'required|numeric|min:0|max:99999999.99',
         'date'             => 'required|date',
         'time'             => 'required|date_format:H:i',
@@ -97,8 +99,10 @@ class ProspectController extends Controller
                 'district' => $request->district,
                 'state' => $request->state,
                 'address' => $request->address,
+                'action_taken' => $request->action_taken,
                 'product' => $request->product,
                 'variant' => $request->variant,
+                'status_type' => $request->status_type,
                 'software_price' => $request->software_price,
                 'date' => $request->date,
                 'time' => $request->time,
@@ -145,8 +149,10 @@ class ProspectController extends Controller
                 'district' => $request->district,
                 'state' => $request->state,
                 'address' => $request->address,
+                'action_taken' => $request->action_taken,
                 'product' => $request->product,
                 'variant' => $request->variant,
+                'status_type' => $request->status_type,
                 'software_price' => $request->software_price,
                 'date' => $request->date,
                 'time' => $request->time,
@@ -384,6 +390,55 @@ class ProspectController extends Controller
             ], 500);
         }
     }
+    public function getBystatus(Request $request)
+{
+    try {
+        $user = Auth::user();
+
+        if ($user->role === "staff") {
+            $staff = Staff::where('user_id', $user->id)->first();
+
+            if (!$staff) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Staff profile not found for this user.',
+                ], 404);
+            }
+
+            $statusin_process = Prospect::where('staff_id', $staff->id)
+                                        ->where('status_type', 'in_process')
+                                        ->get();
+
+            $statusnot_interested = Prospect::where('staff_id', $staff->id)
+                                            ->where('status_type', 'not_interested')
+                                            ->get();
+
+            $statussale_closed = Prospect::where('staff_id', $staff->id)
+                                         ->where('status_type', 'sale_closed')
+                                         ->get();
+        } else {
+            $statusin_process = Prospect::where('status_type', 'in_process')->get();
+            $statusnot_interested = Prospect::where('status_type', 'not_interested')->get();
+            $statussale_closed = Prospect::where('status_type', 'sale_closed')->get();
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'in_process' => $statusin_process,
+                'not_interested' => $statusnot_interested,
+                'sale_closed' => $statussale_closed,
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Something went wrong',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 
 
 }

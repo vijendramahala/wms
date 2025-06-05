@@ -13,6 +13,7 @@ use App\Http\Controllers\TargetController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\MiscController;
 use App\Http\Controllers\ProspectController;
+use App\Http\Controllers\TestController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -21,6 +22,8 @@ use App\Http\Controllers\ProspectController;
 
 // Route::middleware([TestMiddleware::class])->get('/test', function () {
 // });
+Route::get('/test',[TestController::class,'test']);
+
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/register',[RegisterController::class,'register']);
 
@@ -71,8 +74,9 @@ Route::get('/prospect', [ProspectController::class, 'index']);
 Route::get('/prospect/history/{id}', [ProspectController::class, 'history']);
 Route::get('/prospect/create_at', [ProspectController::class, 'filterbycreate_at']);
 Route::get('/prospect/date', [ProspectController::class, 'filterbydate']);
-Route::get('/prospects', [ProspectController::class, 'getByPriority']);
+Route::get('/prospects/priority', [ProspectController::class, 'getByPriority']);
 Route::get('/prospect/misc', [ProspectController::class, 'getAllSoftwareWithProspects']);
+Route::get('/prospect/status', [ProspectController::class, 'getBystatus']);
 
 Route::post('/change-password',[AuthController::class,'changePassword']);
 Route::post('/logout', [AuthController::class, 'logout']);
