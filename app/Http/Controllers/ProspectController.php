@@ -7,6 +7,7 @@ use App\Models\Prospect;
 use App\Models\Staff;
 use App\Models\Register;
 use App\Models\ProspectHistory;
+use App\Models\Misc;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
@@ -190,15 +191,199 @@ class ProspectController extends Controller
         }
     }
     public function history($prospectId)
-{
-    $history = ProspectHistory::where('prospect_id', $prospectId)
-                ->with('user') // user relation agar define kiya ho
-                ->get();
+    {
+        $history = ProspectHistory::where('prospect_id', $prospectId)
+                    ->with('user') // user relation agar define kiya ho
+                    ->get();
 
-    return response()->json([
-        'success' => true,
-        'data' => $history
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'data' => $history
+        ]);
+    }
+
+    public function filterbycreate_at(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'from' => 'required|date',
+            'to' => 'required|date|after_or_equal:from'
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        try {
+            $user = Auth::user();
+            if($user->role === 'staff'){
+                $staff = staff::where('user_id', $user->id)->first();
+
+                if(!$user){
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Staff profile not found for this user'
+                    ], 404);
+                }
+
+                $prospect = Prospect::where('staff_id', $staff->id)
+                            ->whereBetween('created_at', [$request->from, $request->to])
+                            ->get();
+            } else {
+                $prospect = Prospect::whereBetween('created_at',[$request->from,$request->to])->get();
+            }
+            return response()->json([
+                'success' => true,
+                'data' => $prospect 
+            ]);
+        } catch (\Exception $e){
+            return response()->json([
+                'success' => false,
+                'message' => 'Somthing want wrong',
+                'error' => $e->getmessage()
+            ], 500);
+        }
+    }
+
+    public function filterbydate(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'from' => 'required|date',
+            'to' => 'required|date|after_or_equal:from'
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        try {
+            $user = Auth::user();
+
+            if($user->role === 'staff'){
+                $staff = staff::where('user_id', $user->id)->first();
+
+                if(!$user){
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Staff profile not found for this user.'
+                    ], 404);
+                }
+
+                $prospect = Prospect::where('staff_id', $staff->id)
+                                    ->whereBetween('date',[$request->from, $request->to])
+                                    ->get();
+            } else {
+                $prospect = Prospect::whereBetween('date', [$request->from, $request->to])->get();
+            }
+            return response()->json([
+                'success' => true,
+                'data' => $prospect
+            ]);
+        } catch (\Exception $e)
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Somthing want wrong',
+                'error' => $e->getmessage()
+            ], 500);
+        }
+    }
+    public function getByPriority(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if ($user->role === 'staff') {
+                $staff = staff::where('user_id', $user->id)->first();
+
+                if (!$staff) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Staff profile not found for this user.'
+                    ], 404);
+                }
+
+                $hotProspects = Prospect::where('staff_id', $staff->id)
+                                        ->where('priority', 'Hot')
+                                        ->get();
+
+                $coldProspects = Prospect::where('staff_id', $staff->id)
+                                        ->where('priority', 'Cold')
+                                        ->get();
+
+                $normalProspects = Prospect::where('staff_id', $staff->id)
+                                        ->where('priority', 'Normal')
+                                        ->get();
+            } else {
+                // Admin
+                $hotProspects = Prospect::where('priority', 'Hot')->get();
+                $coldProspects = Prospect::where('priority', 'Cold')->get();
+                $normalProspects = Prospect::where('priority', 'Normal')->get();
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'hot' => $hotProspects,
+                    'cold' => $coldProspects,
+                    'normal' => $normalProspects
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getAllSoftwareWithProspects()
+    {
+        try {
+            $user = Auth::user();
+
+            $softwares = Misc::pluck('name');
+
+            $result = [];
+
+            foreach ($softwares as $software) {
+                if ($user->role === 'staff') {
+                    $staff = staff::where('user_id', $user->id)->first();
+
+                    if (!$staff) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Staff profile not found for this user.'
+                        ], 404);
+                    }
+
+                    $prospects = Prospect::where('staff_id', $staff->id)
+                                        ->where('product', $software)
+                                        ->get();
+                } else {
+                    
+                    $prospects = Prospect::where('product', $software)->get();
+                }
+
+                $result[$software] = $prospects;
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 }

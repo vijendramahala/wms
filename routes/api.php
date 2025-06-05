@@ -68,6 +68,11 @@ Route::post('/prospect/create',[ProspectController::class, 'store']);
 Route::put('/prospect/update/{id}', [ProspectController::class, 'update']);
 Route::delete('/prospect/delete/{id}', [ProspectController::class, 'destroy']);
 Route::get('/prospect', [ProspectController::class, 'index']);
+Route::get('/prospect/history/{id}', [ProspectController::class, 'history']);
+Route::get('/prospect/create_at', [ProspectController::class, 'filterbycreate_at']);
+Route::get('/prospect/date', [ProspectController::class, 'filterbydate']);
+Route::get('/prospects', [ProspectController::class, 'getByPriority']);
+Route::get('/prospect/misc', [ProspectController::class, 'getAllSoftwareWithProspects']);
 
 Route::post('/change-password',[AuthController::class,'changePassword']);
 Route::post('/logout', [AuthController::class, 'logout']);

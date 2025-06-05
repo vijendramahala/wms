@@ -23,8 +23,10 @@ return new class extends Migration
             $table->string('district')->nullable();
             $table->string('state')->nullable();
             $table->string('address');
+            $table->string('action_taken');
             $table->string('product');
             $table->string('variant');
+            $table->string('status_type');
             $table->decimal('software_price', 15, 2); // ✅ Better for price values (numeric)
             $table->date('date');
             $table->time('time');
