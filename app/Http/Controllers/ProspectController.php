@@ -391,54 +391,51 @@ class ProspectController extends Controller
         }
     }
     public function getBystatus(Request $request)
-{
-    try {
-        $user = Auth::user();
+    {
+        try {
+            $user = Auth::user();
 
-        if ($user->role === "staff") {
-            $staff = Staff::where('user_id', $user->id)->first();
+            if ($user->role === "staff") {
+                $staff = Staff::where('user_id', $user->id)->first();
 
-            if (!$staff) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Staff profile not found for this user.',
-                ], 404);
-            }
+                if (!$staff) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Staff profile not found for this user.',
+                    ], 404);
+                }
 
-            $statusin_process = Prospect::where('staff_id', $staff->id)
-                                        ->where('status_type', 'in_process')
-                                        ->get();
-
-            $statusnot_interested = Prospect::where('staff_id', $staff->id)
-                                            ->where('status_type', 'not_interested')
+                $statusin_process = Prospect::where('staff_id', $staff->id)
+                                            ->where('status_type', 'in_process')
                                             ->get();
 
-            $statussale_closed = Prospect::where('staff_id', $staff->id)
-                                         ->where('status_type', 'sale_closed')
-                                         ->get();
-        } else {
-            $statusin_process = Prospect::where('status_type', 'in_process')->get();
-            $statusnot_interested = Prospect::where('status_type', 'not_interested')->get();
-            $statussale_closed = Prospect::where('status_type', 'sale_closed')->get();
+                $statusnot_interested = Prospect::where('staff_id', $staff->id)
+                                                ->where('status_type', 'not_interested')
+                                                ->get();
+
+                $statussale_closed = Prospect::where('staff_id', $staff->id)
+                                            ->where('status_type', 'sale_closed')
+                                            ->get();
+            } else {
+                $statusin_process = Prospect::where('status_type', 'in_process')->get();
+                $statusnot_interested = Prospect::where('status_type', 'not_interested')->get();
+                $statussale_closed = Prospect::where('status_type', 'sale_closed')->get();
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'in_process' => $statusin_process,
+                    'not_interested' => $statusnot_interested,
+                    'sale_closed' => $statussale_closed,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'in_process' => $statusin_process,
-                'not_interested' => $statusnot_interested,
-                'sale_closed' => $statussale_closed,
-            ]
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Something went wrong',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
-
-
-
 }

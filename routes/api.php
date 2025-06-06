@@ -14,6 +14,8 @@ use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\MiscController;
 use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\CallinglogController;
+use App\Http\Controllers\DemodoneController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -35,6 +37,7 @@ Route::get('/user/{id}',[UserController::class, 'getUserById']);
 Route::resource('/staff',StaffController::class);
 Route::resource('/reminder',ReminderController::class);
 Route::get('/reminder/fillter/date',[ReminderController::class, 'filterByDate']);
+Route::post('/change-password',[AuthController::class,'changePassword']);
 
 //notice
 Route::post('/notice/create',[NoticeController::class, 'store']);
@@ -78,6 +81,15 @@ Route::get('/prospects/priority', [ProspectController::class, 'getByPriority']);
 Route::get('/prospect/misc', [ProspectController::class, 'getAllSoftwareWithProspects']);
 Route::get('/prospect/status', [ProspectController::class, 'getBystatus']);
 
-Route::post('/change-password',[AuthController::class,'changePassword']);
+//calling log
+Route::get('/calling', [CallinglogController::class, 'index']);
+Route::post('/calling/create', [CallinglogController::class, 'store']);
+Route::put('/calling/update/{id}', [CallinglogController::class, 'update']);
+Route::delete('/calling/delete/{id}', [CallinglogController::class, 'destroy']);
+
+//demo
+Route::post('/demo/create', [DemodoneController::class, 'forwardProspect']);
+Route::get('/demo/show', [DemodoneController::class, 'myTasks']);
+
 Route::post('/logout', [AuthController::class, 'logout']);
 });
