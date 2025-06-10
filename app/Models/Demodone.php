@@ -16,6 +16,10 @@ class Demodone extends Model
         'prospect_name',
         'product',
         'staff_name',
+        'price',
+        'amc',
+        'licence_no',
+        'mobile_no',    
     ];
 
     public function staff()

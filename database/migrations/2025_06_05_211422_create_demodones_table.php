@@ -19,6 +19,11 @@ return new class extends Migration
             $table->string('prospect_name');
             $table->string('product');
             $table->string('staff_name');
+            $table->string('price')->nullable(); // Or use decimal('price', 8, 2)
+            $table->string('amc')->nullable();
+            $table->string('licence_no')->nullable();
+            $table->string('mobile_no')->nullable();
+            $table->string('assigned_to')->nullable();
             $table->timestamps();
         });
     }

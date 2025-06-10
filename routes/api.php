@@ -88,8 +88,12 @@ Route::put('/calling/update/{id}', [CallinglogController::class, 'update']);
 Route::delete('/calling/delete/{id}', [CallinglogController::class, 'destroy']);
 
 //demo
-Route::post('/demo/create', [DemodoneController::class, 'forwardProspect']);
-Route::get('/demo/show', [DemodoneController::class, 'myTasks']);
+Route::post('/demodone/forward-prospect', [DemodoneController::class, 'forwardProspect']);
+ Route::post('/demodone/forward-back/{id}', [DemodoneController::class, 'forwardBackToCreator']);
+Route::get('/demodone/my-tasks', [DemodoneController::class, 'myTasks']);
+Route::post('/demodone/complete/{id}', [DemodoneController::class, 'completeTask']);
+
+
 
 Route::post('/logout', [AuthController::class, 'logout']);
 });
